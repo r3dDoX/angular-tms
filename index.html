@@ -1375,10 +1375,124 @@
                 </p>
             </section>
             <section>
+                <h3>CSS Culprits</h3>
+                <ul>
+                    <li>Everything is global</li>
+                    <li>Unexpected effects of Global/Parent styles</li>
+                    <li>Don't blindly copy from SO!</li>
+                </ul>
+            </section>
+            <section>
+                <h3>CSS Selectors</h3>
+                <pre><code class="language-css" data-trim contenteditable data-noescape spellcheck="false">
+                    #myId {}
+                    .my-class {}
+                    .my-class div {}
+                    .my-class > div {}
+                    .my-class:hover {}
+                    a:not([href]) {}
+                </code></pre>
+            </section>
+            <section>
                 <h3>CSS Selectors</h3>
                 <p>
                     <a href="https://flukeout.github.io/" target="_blank">CSS Diner</a>
                 </p>
+            </section>
+            <section>
+                <h3>CSS Precedence</h3>
+                <p>
+                    Which style gets applied is decided by the precedence of its selector. If the precedence is the same, the last selector in our declaration is used.
+                </p>
+            </section>
+            <section>
+                <h3>CSS Precedence</h3>
+                <ol>
+                    <li>Inline Styles</li>
+                    <li>ID</li>
+                    <li>Classes / Attributes / Pseudo-Classes</li>
+                    <li>Tag Names / Pseudo-Elements</li>
+                </ol>
+            </section>
+            <section>
+                <h3>CSS Precedence</h3>
+                <pre><code class="language-css" data-trim contenteditable data-noescape spellcheck="false">
+                    #myId {}                /* 0100 */
+                    .my-class {}            /* 0010 */
+                    .my-class.my-class {}   /* 0020 */
+                    div.my-class            /* 0011 */
+                    div:hover               /* 0011 */
+                    :host                   /* 0010 */
+                    div::after              /* 0002 */
+                    div                     /* 0001 */
+                </code></pre>
+            </section>
+            <section>
+                <h3>Units</h3>
+                <ul>
+                    <li>px</li>
+                    <li>em</li>
+                    <li>rem</li>
+                    <li>vh</li>
+                    <li>vw</li>
+                    <li>%</li>
+                    <li>and more...</li>
+                </ul>
+            </section>
+            <section>
+                <h3>Units (px)</h3>
+                <p>
+                    Whenever we want fixed space even if our customer has a bigger/smaller font-size in his OS.
+                </p>
+            </section>
+            <section>
+                <h3>Units (rem)</h3>
+                <p>
+                    Whenever we want to adjust to font-size settings of the users OS.<br>
+                    References the size of the small 'm' in the root font size.
+                </p>
+            </section>
+            <section>
+                <h3>Units (rem)</h3>
+                <pre><code class="language-css" data-trim contenteditable data-noescape spellcheck="false">
+                    html {
+                      font-size: 62.5%;
+                    }
+                </code></pre>
+                <p>
+                    Default font size is 16px so this will result in 10px per rem with default font-size settings.
+                </p>
+            </section>
+            <section>
+                <h3>Units (%)</h3>
+                <p>
+                    Always refers to a fixed size of parent elements. So it an be counterintuitive depending on which parent elements have a size set.
+                </p>
+            </section>
+            <section>
+                <h3>Angular Specifics</h3>
+                <p>
+                    To prevent CSS Styles from components leaking into child components and vice versa, Angular has its own Attributes to isolate styles.
+                </p>
+            </section>
+            <section>
+                <h3>Angular CSS Scoping</h3>
+                <img width="60%" src="../img/angular-scoping.png"/>
+            </section>
+            <section>
+                <h3>Angular specific selectors</h3>
+                <ul>
+                    <li>:host</li>
+                    <li>:host-context</li>
+                    <li>::ng-deep</li>
+                </ul>
+            </section>
+            <section>
+                <h3>CSS Layouting</h3>
+                <ul>
+                    <li>Flexbox: <a href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/" target="_blank">Guide</a></li>
+                    <li>Grid: <a href="https://css-tricks.com/snippets/css/complete-guide-grid/" target="_blank">Guide</a></li>
+                </ul>
             </section>
             <section>
                 <h3>Sass (scss)</h3>
@@ -1390,7 +1504,7 @@
             </section>
             <section>
                 <h3>Sass Basics #1</h3>
-                <pre><code class="language-typescript" data-trim contenteditable data-noescape spellcheck="false">
+                <pre><code class="language-scss" data-trim contenteditable data-noescape spellcheck="false">
                     @use "sass:math";
 
                     $font-size: 2.4rem;
@@ -1399,7 +1513,7 @@
             </section>
             <section>
                 <h3>Sass Basics #2</h3>
-                <pre><code class="language-typescript" data-trim contenteditable data-noescape spellcheck="false">
+                <pre><code class="language-scss" data-trim contenteditable data-noescape spellcheck="false">
                     @import '../../variables.scss';
 
                     .my-class {
@@ -1412,6 +1526,33 @@
                       }
                     }
                 </code></pre>
+            </section>
+            <section>
+                <h3>Sass Basics #3</h3>
+                <pre><code class="language-scss" data-trim contenteditable data-noescape spellcheck="false">
+                    @mixin roundedElement($border-radius: 2.4rem) {
+                        border-radius: $border-radius;
+                        background-color: $color-white;
+                        box-shadow: $ui-shadow-light;
+                    }
+
+                    .element {
+                        @include roundedElement;
+                    }
+                </code></pre>
+            </section>
+            <section>
+                <h3>HTML</h3>
+                <p>
+                    Always use HTML elements for what they are meant:<br>
+                    &lt;button&gt;, &lt;div&gt;, &lt;p&gt;, ...
+                </p>
+            </section>
+            <section>
+                <h3>HTML</h3>
+                <p>
+                    Less DOM Elements are better
+                </p>
             </section>
         </section>
     </div>
