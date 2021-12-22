@@ -262,13 +262,15 @@
             </section>
             <section>
                 <h2>Component</h2>
-                <pre><code contenteditable data-trim data-noescape data-line-numbers="1-16|2-4|9,10|6,12-15" spellcheck="false">
+                <pre><code contenteditable data-trim data-noescape data-line-numbers="1-16|2-4|7,8|11,12|6,14-17" spellcheck="false">
                     @Component({
                       selector: 'app-header-bar',
                       templateUrl: './header-bar.component.html',
                       styleUrls: ['./header-bar.component.scss']
                     })
                     export class HeaderBarComponent implements OnInit {
+                      @Input() elements!: string;
+                      @Output() elementsToDisplay: EventEmitter&lt;string&gt; = new EventEmitter();
                       public stage$!: Observable&lt;string&gt;;
 
                       constructor(private httpClient: HttpClient) {
@@ -279,6 +281,17 @@
                             .get&lt;string&gt;(`${backendUrl}/api/stage`, { responseType: 'text'});
                       }
                     }
+                </code></pre>
+            </section>
+            <section>
+                <h2>Inputs/Outputs</h2>
+                <pre><code class="language-html" contenteditable data-trim data-noescape spellcheck="false">
+                    &lt;my-component
+                        (my-output)="doSomething($event)"
+                        [myInput]="myVariable"
+                    &gt;&lt;/my-component&gt;
+
+                    &lt;input [(ngModel)]="newInventoryEntry.verkaufsstellenCode"&gt;
                 </code></pre>
             </section>
             <section>
