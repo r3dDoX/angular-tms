@@ -67,3 +67,31 @@
 .reveal .justify-start { justify-content: flex-start; }
 .reveal .justify-center { justify-content: center; }
 .reveal .justify-end { justify-content: flex-end; }
+
+.tip {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	display: flex;
+	background-color: #5AB7DB;
+	color: white;
+	padding: 20px;
+	border-radius: 10px;
+	transform: translateX(-50%) translateY(-50%) rotate(20deg);
+	min-width: 80%;
+	text-align: left;
+
+	&.visible {
+		opacity: .9;
+	}
+
+	&::before {
+		content: ' ';
+		background: url(../../img/light-bulb.svg) no-repeat;
+		background-size: contain;
+		display: block;
+		min-width: 50px;
+		min-height: 50px;
+		margin-right: 20px;
+	}
+}

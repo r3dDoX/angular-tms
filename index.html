@@ -1,40 +1,1436 @@
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+    <title>Angular@TMS</title>
 
-		<link rel="stylesheet" href="dist/reset.css">
-		<link rel="stylesheet" href="dist/reveal.css">
-		<link rel="stylesheet" href="dist/theme/black.css">
+    <link rel="stylesheet" href="dist/reset.css">
+    <link rel="stylesheet" href="dist/reveal.css">
+    <link rel="stylesheet" href="dist/theme/black.css">
 
-		<!-- Theme used for syntax highlighted code -->
-		<link rel="stylesheet" href="plugin/highlight/monokai.css">
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
-			</div>
-		</div>
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet" href="plugin/highlight/monokai.css">
+</head>
+<body>
+<div class="reveal">
+    <div class="slides">
+        <section>
+            <h1>Angular@TMS</h1>
+        </section>
+        <section>
+            <section>
+                <h2>Basics</h2>
+            </section>
+            <section>
+                <h2>TypeScript -> JavaScript</h2>
+                <p>
+                    tsconfig.json defines how TypeScript gets compiled to JavaScript. Default Angular setup is pretty strict.
+                </p>
+            </section>
+            <section>
+                <p>tsconfig.json</p>
+                <pre><code data-trim data-noescape data-line-numbers="1-30|16|17,20|27">
+                    {
+                      "compileOnSave": false,
+                      "compilerOptions": {
+                        "baseUrl": "./",
+                        "outDir": "./dist/out-tsc",
+                        "forceConsistentCasingInFileNames": true,
+                        "strict": true,
+                        "noImplicitReturns": true,
+                        "noFallthroughCasesInSwitch": true,
+                        "sourceMap": true,
+                        "declaration": false,
+                        "downlevelIteration": true,
+                        "experimentalDecorators": true,
+                        "moduleResolution": "node",
+                        "importHelpers": true,
+                        "noImplicitAny": true,
+                        "target": "es2017",
+                        "module": "es2020",
+                        "lib": [
+                          "es2018",
+                          "dom"
+                        ]
+                      },
+                      "angularCompilerOptions": {
+                        "enableI18nLegacyMessageIdFormat": false,
+                        "strictInjectionParameters": true,
+                        "strictInputAccessModifiers": true,
+                        "strictTemplates": true
+                      }
+                    }
+                </code></pre>
+            </section>
+            <section>
+                <h2>TypeScript</h2>
+                <p>structural vs nominal typing</p>
+            </section>
+            <section>
+                <h3>Nominal Typing</h3>
+                <pre><code contenteditable data-trim data-noescape spellcheck="false">
+                    class Foo {
+                        public String myString;
+                    }
 
-		<script src="dist/reveal.js"></script>
-		<script src="plugin/notes/notes.js"></script>
-		<script src="plugin/markdown/markdown.js"></script>
-		<script src="plugin/highlight/highlight.js"></script>
-		<script>
-			// More info about initialization & config:
-			// - https://revealjs.com/initialization/
-			// - https://revealjs.com/config/
-			Reveal.initialize({
-				hash: true,
+                    class Bar {
+                        public String myString;
+                    }
 
-				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
-			});
-		</script>
-	</body>
+                    Foo foo = new Bar(); // won't work
+                </code></pre>
+            </section>
+            <section>
+                <h3>Structural Typing</h3>
+                <pre><code class="language-java" contenteditable data-trim data-noescape spellcheck="false">
+                    class Foo {
+                        myString: string;
+                    }
+
+                    class Bar {
+                        myString: string;
+                    }
+
+                    let obj: Foo = new Bar(); // all good
+                </code></pre>
+            </section>
+            <section>
+                <h2>Union Types</h2>
+            </section>
+            <section>
+                <h2>Declaration</h2>
+                <pre><code class="language-typescript" data-trim contenteditable data-noescape spellcheck="false">
+                    type myUnion = 'cat' | 'dog' | 'catdog';
+
+                    const test: myUnion = 'cat'; // ok
+                    const test2: myUnion = 'person'; // error
+                </code></pre>
+            </section>
+            <section>
+                <h2>Union vs Enum</h2>
+                <ul>
+                    <li>Type safety</li>
+                    <li>Code completion works</li>
+                    <li>Less Code</li>
+                    <li>No imports</li>
+                    <li>Favor union over enum</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Mix with structural types</h2>
+                <pre>
+                    <code class="language-typescript" data-trim contenteditable data-noescape spellcheck="false">
+                        interface FlyAction {
+                            type: 'Fly';
+                            fly: () => void;
+                        }
+
+                        interface SwimAction {
+                            type: 'Swim';
+                            swim: () => void;
+                        }
+
+                        function move(action: FlyAction | SwimAction) {
+                            if (action.type === 'Fly') {
+                                action.fly();
+                            } else {
+                                action.swim();
+                            }
+                        }
+                    </code>
+                </pre>
+            </section>
+            <section>
+                <h2>@types packages</h2>
+            </section>
+            <section>
+                <h2>Types for packages without</h2>
+                <ul>
+                    <li>3rd party libs without types are a pain in the ass</li>
+                    <li>Goal: provide types for any 3rd party lib</li>
+                    <li><a href="https://github.com/DefinitelyTyped/DefinitelyTyped">Open Source repo</a></li>
+                    <li>Easily install e.g.:
+                        <pre><code class="hljs npm">npm install @types/jest</code></pre>
+                    </li>
+                </ul>
+            </section>
+            <section>
+                <p>There are types for all popular libs...</p>
+            </section>
+            <section>
+                <h2>Advanced types</h2>
+            </section>
+            <section>
+                <h2>Generic object types</h2>
+                <pre>
+                    <code class="hljs typescript" data-trim contenteditable data-noescape spellcheck="false">
+                        type HimTypes = 'CONSTRUCTION_SITE' | 'DELAY' | 'DISTURBANCE';
+
+                        type HimIcons = {
+                            [key in HimTypes]: boolean | string;
+                        }
+
+                        const icons: HimIcons {
+                            DELAY: true,
+                            ...
+                        }
+                    </code>
+                </pre>
+                <p>Code completion and error if wrong key or not all keys</p>
+            </section>
+            <section>
+                <h2>keyof</h2>
+                <pre>
+                    <code class="hljs typescript" data-trim contenteditable data-noescape spellcheck="false">
+                        interface Named {
+                            first: string;
+                            last: string;
+                        }
+
+                        function extractNamePart(key: keyof Named) { ... }
+
+                        extractNamePart('first');
+                    </code>
+                </pre>
+            </section>
+            <section>
+                <h2>advanced keyof</h2>
+                <pre>
+                    <code class="hljs typescript" data-trim contenteditable data-noescape spellcheck="false">
+                        function prop&lt;T, K extends keyof T&gt;(obj: T, key: K) {
+                            return obj[key];
+                        }
+                    </code>
+                </pre>
+            </section>
+            <section>
+                <h2>Nullable types</h2>
+                <p>Compiler flag <strong>strictNullChecks</strong> has to be set.</p>
+                <pre>
+                    <code class="hljs typescript" data-trim contenteditable data-noescape spellcheck="false">
+                        function f(x: number, y?: number) {
+                            return x + (y ?? 0);
+                        }
+
+                        f(1, 2);
+                        f(1);
+                        f(1, undefined);
+                        f(null); // Error
+                    </code>
+                </pre>
+            </section>
+            <section>
+                <h2>Intersection types</h2>
+                <pre>
+                    <code class="hljs typescript" data-trim contenteditable data-noescape spellcheck="false">
+                        type LinkedList&lt;T&gt; = T & { next: LinkedList&lt;T&gt; };
+
+                        interface Person {
+                            name: string;
+                        }
+
+                        const people: LinkedList&lt;Person&gt; = getPeople();
+                        people.name;
+                        people.next.name;
+                    </code>
+                </pre>
+            </section>
+            <section>
+                <h2>Many more...</h2>
+                <ul>
+                    <li>Partial&lt;T&gt;</li>
+                    <li>Readonly&lt;T&gt;</li>
+                    <li>Conditional types</li>
+                    <li>User-Defined Type Guards</li>
+                </ul>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h2>Angular</h2>
+            </section>
+            <section>
+                <h2>Building Blocks</h2>
+                <ul>
+                    <li>Components</li>
+                    <li>Services</li>
+                    <li>Directives</li>
+                    <li>Pipes</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Component</h2>
+                <pre><code contenteditable data-trim data-noescape data-line-numbers="1-16|2-4|9,10|6,12-15" spellcheck="false">
+                    @Component({
+                      selector: 'app-header-bar',
+                      templateUrl: './header-bar.component.html',
+                      styleUrls: ['./header-bar.component.scss']
+                    })
+                    export class HeaderBarComponent implements OnInit {
+                      public stage$!: Observable&lt;string&gt;;
+
+                      constructor(private httpClient: HttpClient) {
+                      }
+
+                      ngOnInit(): void {
+                        this.stage$ = this.httpClient
+                            .get&lt;string&gt;(`${backendUrl}/api/stage`, { responseType: 'text'});
+                      }
+                    }
+                </code></pre>
+            </section>
+            <section>
+                <h2>Service (Injectable)</h2>
+                <pre><code contenteditable data-trim data-noescape spellcheck="false">
+                    @Injectable({
+                       providedIn: 'root'
+                    })
+                    export class SomeService{
+                    }
+                </code></pre>
+            </section>
+            <section>
+                <h2>Module</h2>
+                <p>Often regular JS Modules are sufficient and no Injectable is needed</p>
+                <pre><code contenteditable data-trim data-noescape spellcheck="false">
+                    // calculator.ts
+                    export function add(a: number, b: number): number {
+                        return a + b;
+                    }
+
+                    // my.component.ts
+                    import { add } from 'calculator';
+                </code></pre>
+            </section>
+            <section>
+                <h2>Directive (structural)</h2>
+                <ul>
+                    <li>Can be viewed as some sort of Side-Effect on DOM Elements</li>
+                    <li>Always have to be written with <strong>*</strong>directiveName</li>
+                    <li>e.g. *ngIf, *ngFor...</li>
+                    <li>Has no Template</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Directive</h2>
+                <pre><code contenteditable data-trim data-noescape spellcheck="false" data-line-numbers="1-24|2|6|12-13">
+                    @Directive({
+                      selector: '[appHasRole]'
+                    })
+                    export class HasRoleDirective implements OnInit, OnDestroy {
+
+                      @Input() appHasRole?: Role;
+
+                      private isVisible = false;
+                      private subscriptions: Subscription[] = [];
+
+                      constructor(
+                        private viewContainerRef: ViewContainerRef,
+                        private templateRef: TemplateRef&lt;any&gt;,
+                        private userService: UserService
+                      ) { }
+
+                      ngOnInit(): void {
+                        /* code */
+                      }
+
+                      ngOnDestroy(): void {
+                        /* code */
+                      }
+                    }
+                </code></pre>
+            </section>
+            <section>
+                <h2>Directive</h2>
+                <pre><code class="language-html" contenteditable data-trim data-noescape spellcheck="false">
+                    &lt;div *appHasRole="'USER_TEST'"&gt;
+                        ...
+                    &lt;/div&gt;
+                </code></pre>
+            </section>
+            <section>
+                <h2>Built-In Directives</h2>
+                <pre><code class="language-html" contenteditable data-trim data-noescape spellcheck="false">
+                    &lt;div *ngIf="person !== null"&gt;&lt;/div&gt;
+                    &lt;div *ngFor="let person of persons"&gt;&lt;/div&gt;
+                    &lt;div *ngClass="{ 'mark': checked === true, 'always': true }"&gt;&lt;/div&gt;
+                    &lt;input type="text" [(ngModel)]="twoWayData"/&gt;
+                    &lt;div [ngSwitch]="choice"&gt;
+                        &lt;span *ngSwitchCase="1"&gt;&lt;/span&gt;
+                        &lt;span *ngSwitchCase="2"&gt;&lt;/span&gt;
+                    &lt;/div&gt;
+                </code></pre>
+            </section>
+            <section>
+                <h2>Pipe</h2>
+                <pre><code class="language-typescript" contenteditable data-trim data-noescape spellcheck="false">
+                    @Pipe({
+                        name: 'welcome'
+                    })
+                    export class WelcomePipe implements PipeTransform {
+                      transform(value: string): string {
+                        return `Welcome to ${value}`;
+                      }
+                    }
+                </code></pre>
+            </section>
+            <section>
+                <h3>Pipe Usage</h3>
+                <pre><code class="language-html" contenteditable data-trim data-noescape spellcheck="false">
+                    &lt;div&gt;
+                        {{ person.name | welcome }}
+                    &lt;/div&gt;
+                </code></pre>
+            </section>
+            <section>
+                <h3>Advanced Pipes</h3>
+                <pre><code class="language-typescript" contenteditable data-trim data-noescape spellcheck="false">
+                    @Pipe({
+                        name: 'welcome'
+                    })
+                    export class WelcomePipe implements PipeTransform {
+                      transform(value: string, separator: string): string {
+                        return value.split(' ').join(separator);
+                      }
+                    }
+                </code></pre>
+            </section>
+            <section>
+                <h3>Advanced Pipe Usage</h3>
+                <pre><code class="language-html" contenteditable data-trim data-noescape spellcheck="false">
+                    &lt;div&gt;
+                        {{ person.name | welcome:',' }}
+                    &lt;/div&gt;
+                </code></pre>
+            </section>
+            <section>
+                <h3>Advanced Pipe Output</h3>
+                <pre><code contenteditable data-trim data-noescape spellcheck="false">
+                    My,Name,is,Patrick
+                </code></pre>
+            </section>
+            <section>
+                <h3>Built-In Pipes</h3>
+                <pre><code contenteditable data-trim data-noescape spellcheck="false">
+                    {{ today | date : ‘fullDate’ }}
+                    {{ observalbe$ | async }}
+                    {{ 1234567 | currency:'CHF':'symbol':'1.2-5' }}
+                </code></pre>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h2>Functional Programming</h2>
+            </section>
+            <section>
+                <h2>Function</h2>
+                <p>
+                    A function is a process which takes some input, called arguments,
+                    and produces some output called a return value.
+                </p>
+                <p>
+                    <code>fn(in) => out</code>
+                </p>
+            </section>
+            <section>
+                <h2>Purpose of a function</h2>
+                <ul>
+                    <li><b>mapping</b> - A function maps input values to output values.​</li>
+                    <li><b>procedure</b> - A function may perform a sequence of steps.</li>
+                    <li><b>i/o</b> - A function may communicate with other parts of the system -> Side Effects</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Higher Order Function</h2>
+                <p>A function which takes a function as an argument, returns a function, or both.</p>
+            </section>
+            <section>
+                <h2>Pure Function</h2>
+                <p>Definition</p>
+                <ul>
+                    <li>… given the same input, will always return the same output.​</li>
+                    <li>… produces no side effects.​</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Pure Function</h2>
+                <p>Definition</p>
+                <ul>
+                    <li>… does not rely on any external mutable state.​</li>
+                    <li>… does not mutate external state.​</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Impure Function</h2>
+                <p>The very opposite of a pure function</p>
+                <p>
+                    <cite>
+                        "A dead giveaway that a function is impure is if it makes sense to call it without using its
+                        return
+                        value. For pure functions, that’s a noop."
+                    </cite>
+                </p>
+                <p><a href="https://codesandbox.io/s/8z3m6wx7ll" target="_blank">Exercises</a></p>
+                <aside class="notes">
+                    <ul>
+                        <li>This is the first exercise</li>
+                        <li>Click on the link. There is nothing to be installed. Everything can be done from within the browser.</li>
+                        <li>Do not excessively refresh your browser -> Sandbox might get stuck / blocked</li>
+                        <li>The idea of this exercise is to assess whether the given functions in the exercises are pure or impure based on the given definitions.</li>
+                        <li>The class should discuss in pairs for a couple of minutes and then we discuss the results in the plenum.</li>
+                    </ul>
+                </aside>
+            </section>
+            <section>
+                <h2>Pure or impure ? Why ?</h2>
+                <pre><code data-trim contenteditable data-noescape>
+                    let sum = function(a, b) {
+                      return a + b;
+                    };
+
+                    let result = sum(1, 2);
+                </code></pre>
+                <div class="tip fragment">pure => primitives are immutable</div>
+                <aside class="notes">
+                    <ul>
+                        <li>trivial example for the start, nothing extraordinary here</li>
+                    </ul>
+                </aside>
+            </section>
+            <section>
+                <h2>Pure or impure ? Why ?</h2>
+                <pre><code data-trim contenteditable data-noescape>
+                    var value1 = 1;
+                    var value2 = 2;
+
+                    let sum = function (a, b) {
+                      return a + b;
+                    };
+
+                    let result = sum(value1, value2);
+                </code></pre>
+                <div class="tip fragment">pure => primitives are immutable</div>
+                <aside class="notes">
+                    <ul>
+                        <li>another trivial example for the start, nothing extraordinary here</li>
+                        <li>var is mutable, but the values is passed by value</li>
+                    </ul>
+                </aside>
+            </section>
+            <section>
+                <h2>Pure or impure ? Why ?</h2>
+                <pre><code data-trim contenteditable data-noescape>
+                    const value1 = 1;
+                    var b = 2;
+
+                    let sum = function (a, b) {
+                      return a + b;
+                    };
+
+                    let result = sum(value1, b);
+                </code></pre>
+                <div class="tip fragment">pure => primitives are immutable</div>
+                <aside class="notes">
+                    <ul>
+                        <li> value1 is constant</li>
+                        <li>var b is part of function scope</li>
+                    </ul>
+                </aside>
+            </section>
+            <section>
+                <h2>Pure or impure ? Why ?</h2>
+                <pre><code data-trim contenteditable data-noescape>
+                    let a = 0;
+                    let b = 1;
+
+                    let sum = function(a, b) {
+                      return a = a + b;
+                    }
+
+                    let result = sum(a, b);
+                </code></pre>
+                <div class="tip fragment">pure => primitives are immutable <br/>- assignment is part of function
+                    scope
+                </div>
+                <aside class="notes">
+                    <ul>
+                        <li>we tried to trick you</li>
+                        <li>a,b are part of function scope</li>
+                        <li>assignment to a is part of function scope</li>
+                    </ul>
+                </aside>
+            </section>
+            <section>
+                <h2>Pure or impure ? Why ?</h2>
+                <pre><code data-trim contenteditable data-noescape>
+                    let a = 0;
+
+                    let inc = function (a) {
+                      return a++;
+                    }
+
+                    let result = inc(a);
+                </code></pre>
+                <div class="tip fragment">pure => primitives are immutable</div>
+                <aside class="notes">
+                    <ul>
+                        <li>a is part of function scope</li>
+                        <li>assignment to a is part of function scope</li>
+                    </ul>
+                </aside>
+            </section>
+            <section>
+                <h2>Pure or impure ? Why ?</h2>
+                <pre><code data-trim contenteditable data-noescape>
+                    var array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
+
+                    let map = function (array) {
+                      for (var i = 0; i < array.length; i++) {
+                        setTimeout(() => array[i]++, 0);
+                      }
+                      return array;
+                    }
+
+                    let result = map(array);
+                </code></pre>
+                <div class="tip fragment">impure => setTimeout is a side-effect<br/>- array is resized <br/>- array is mutable*</div>
+                <aside class="notes">
+                    <ul>
+                        <li>setTimeout is a side-effect on its own - everything else does not really matter</li>
+                        <li>Explain the grayzone about purity. There is a strict and a less-strict way of interpreting it.</li>
+                        <li>Since we are not in a purely functional language we may stick to the less strict interpretation</li>
+                        <li>In a purely functional language this would be impure if array were mutable</li>
+                    </ul>
+                </aside>
+            </section>
+            <section>
+                <h2>Pure or impure ? Why ?</h2>
+                <pre><code data-trim contenteditable data-noescape>
+                    const immutable = { a: 1, b: 2, c: 3 };
+
+                    function mutate(object) {
+                      return object;
+                    }
+
+                    let result = mutate(immutable);
+                </code></pre>
+                <div class="tip fragment">1) pure => identity-function <br/>2) impure => object is mutable*</div>
+                <aside class="notes">
+                    <ul>
+                        <li>identity-function is always pure</li>
+                        <li>Grayzone: object is mutable, but it isn't modified here, so we could say it is still pure</li>
+                    </ul>
+                </aside>
+            </section>
+            <section>
+                <h2>Pure or impure ? Why ?</h2>
+                <pre><code data-trim contenteditable data-noescape>
+                    const array = [8, 4, 1, 6, 8, 0];
+
+                    function sort(list) {
+                      console.log("sorted:" + (list = list.slice().sort()));
+                      return list;
+                    }
+
+                    let result = sort(array);
+                </code></pre>
+                <div class="tip fragment">impure => console.log is a side-effect</div>
+            </section>
+            <section>
+                <h2>Pure or impure ? Why ?</h2>
+                <pre><code data-trim contenteditable data-noescape>
+                    function log() {
+                      console.log("Hello World");
+                    }
+
+                    function doSomething(fn) {
+                      if (1 === 0) {
+                        fn();
+                      }
+                      return 1;
+                    }
+
+                    let result = doSomething(log);
+                </code></pre>
+                <div class="tip fragment">pure => doSomething() is pure despite log() being impure</div>
+                <aside class="notes">
+                    <ul>
+                        <li>The function is never performed</li>
+                        <li>Little side explanation about purely funcitonal languages: It can be proven that fn will never be performed here since the condition is static.</li>
+                        <li>Besides: Also the compiled machine code will not include the if-statement</li>
+                    </ul>
+                </aside>
+            </section>
+            <section>
+                <h2>Pure or impure ? Why ?</h2>
+                <pre><code data-trim contenteditable data-noescape>
+                    function doNothing(fn) {
+                          return fn;
+                    }
+
+                    let result = doNothing(Math.random);
+                </code></pre>
+                <div class="tip fragment">pure => doNothing() is the identity-function <br/>- Math.random
+                    (impure) is never performed
+                </div>
+                <aside class="notes">
+                    <ul>
+                        <li>if Math.random were performed anywhere, then the function would be impure</li>
+                    </ul>
+                </aside>
+            </section>
+            <section>
+                <h2>Pure or impure ? Why ?</h2>
+                <pre><code data-trim contenteditable data-noescape>
+                    function getDocument() {
+                      return global.window.document;
+                    }
+                    getDocument()
+
+                    let result = getDocument();
+                </code></pre>
+                <div class="tip fragment">impure => accessing external/global scope</div>
+                <aside class="notes">
+                    <ul>
+                        <li>global state is mutable in Javascript, therefore this is impure</li>
+                        <li>Note: this could be transformed to be pure</li>
+                    </ul>
+                </aside>
+            </section>
+            <section>
+                <h2>Pure or impure ? Why ?</h2>
+                <pre><code data-trim contenteditable data-noescape>
+                    function divide(dividend, divisor) {
+                      if (divisor === 0) throw new Error("Can't divide by 0.");
+                      return dividend / divisor;
+                    }
+
+                    let result = divide(1, 1);
+                </code></pre>
+                <div class="tip fragment">impure => exceptions are side-effects</div>
+                <aside class="notes">
+                    <ul>
+                        <li>Exceptions cause context-switch on the stack, swapping control to the exception handler</li>
+                        <li>Note: this could be transformed to be pure</li>
+                    </ul>
+                </aside>
+            </section>
+            <section>
+                <h2>Properties of pure functions</h2>
+                <ul>
+                    <li>deterministic</li>
+                    <li>predictable</li>
+                    <li>completely independent of outside state</li>
+                    <li>immune to bugs related to shared mutable state</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Use of pure functions</h2>
+                <ul>
+                    <li>great candidates for parallel processing</li>
+                    <li>easy to move around, refactor and reorganize</li>
+                    <li>flexible and adaptable to future changes</li>
+                    <li>very easy + safe to reuse (no state, no side-effects)</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Shades of Purity</h2>
+                <ul>
+                    <li>Technically, there are no pure functions in a non purely functional language</li>
+                    <li>However (almost) pure is good enough for functional-oriented languages</li>
+                </ul>
+                <aside class="notes">
+                    <ul>
+                        <li>In a language like Haskell, which is truly functional, purity can be proven because of referential transparency and the fact that is is based on math.</li>
+                        <li>It's basically just a deduction of all functions until only a constant remains (mathematically fond proof). If not then there exists a side-effect.</li>
+                        <li>So purely functional oriented languages can proofe the presence/absence of side-effects (and that's one major reason what makes them awesome)</li>
+                        <li>In all other languages which are only functionally oriented this proof is not possible and purity must be interpreted slightly less strict - but this is still good
+                            enough.
+                        </li>
+                    </ul>
+                </aside>
+            </section>
+            <section>
+                <h2>Resources</h2>
+                <ul>
+                    <li>
+                        <a href="https://github.com/getify/functional-light-js" target="_blank">Functional-Light JavaScript</a>
+                    </li>
+                </ul>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h2>Array Functions</h2>
+            </section>
+            <section>
+                <h2>Array Functions: Quick Recap</h2>
+                <ul class="grid">
+                    <li>filter()</li>
+                    <li>find()</li>
+                    <li>some()</li>
+                    <li>every()</li>
+                    <li>map()</li>
+                    <li>flatMap()</li>
+                    <li>reduce()</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Extension Libraries</h2>
+                <ul>
+                    <li>Prototype</li>
+                    <li>jQuery</li>
+                    <li>Underscore.js</li>
+                    <li>Do it yourself utility</li>
+                    <div class="tip fragment">no longer necessary - really ! => go native</div>
+                </ul>
+            </section>
+            <section>
+                <h2>(Native) Array Functions</h2>
+                <ul>
+                    <li>No fishy/magic transformations of callbacks</li>
+                    <li>No fishy/magic extra behaviour during iterations</li>
+                    <li>Performance</li>
+                    <li>ECMAScript (Standard) is evolving quickly</li>
+                </ul>
+                <aside class="notes">
+                    <ul>
+                        <li>Array functions are so important, that we will quickly recap them</li>
+                        <li>Most are trivial, we will not spend time on them</li>
+                        <li>We will focus on reduce() since this is the most complec but also versatile one</li>
+                    </ul>
+                </aside>
+            </section>
+            <section>
+                <h2>filter()</h2>
+                <pre><code data-trim data-noescape>
+                        array.filter(fn(currentValue, index?, array?), thisArg?)
+                    </code></pre>
+                <p>
+                    <b>callback</b> - the function used for testing<br>
+                    <b>currentValue</b> - the element under test<br>
+                    <b>index?</b> - the index of the element under test<br>
+                    <b>array?</b> - the array being tested<br>
+                    <b>thisArg?</b> - the element <i>this</i> is bound to<br>
+                </p>
+                <a href="https://codesandbox.io/s/01nx4kp6n0%20/" target="_blank">Exercises [1]</a>
+            </section>
+            <section>
+                <h2>Wrap-Up: filter()</h2>
+                <ul>
+                    <li>Returns a new array</li>
+                    <li>Very little code to write</li>
+                    <li>Very simple to use</li>
+                </ul>
+            </section>
+            <section>
+                <h2>find()</h2>
+                <pre><code data-trim data-noescape>
+                array.find(fn(currentValue, index?, array?), thisArg?)
+            </code></pre>
+                <p>
+                    <b>callback</b> - the function used for testing<br>
+                    <b>currentValue</b> - the element under test<br>
+                    <b>index?</b> - the index of the element under test<br>
+                    <b>array?</b> - the array being tested<br>
+                    <b>thisArg?</b> - the element <i>this</i> is bound to<br>
+                </p>
+                <a href="https://codesandbox.io/s/01nx4kp6n0%20/" target="_blank">Exercises [2]</a>
+            </section>
+            <section>
+                <h2>Wrap-Up: find()</h2>
+                <ul>
+                    <li>Returns the first match (only)</li>
+                    <li>Iteration aborts after the first match</li>
+                    <li>Very little code to write</li>
+                    <li>Very simple to use</li>
+                </ul>
+            </section>
+            <section>
+                <h2>some()</h2>
+                <pre><code data-trim data-noescape>
+                array.some(fn(currentValue, index?, array?), thisArg?)
+            </code></pre>
+                <p>
+                    <b>callback</b> - the function used for testing<br>
+                    <b>currentValue</b> - the element under test<br>
+                    <b>index?</b> - the index of the element under test<br>
+                    <b>array?</b> - the array being tested<br>
+                    <b>thisArg?</b> - the element <i>this</i> is bound to<br>
+                </p>
+                <a href="https://codesandbox.io/s/01nx4kp6n0%20/" target="_blank">Exercises [3]</a>
+            </section>
+            <section>
+                <h2>Wrap-Up: some()</h2>
+                <ul>
+                    <li>Strange naming for <i>match-any</i></li>
+                    <li>Iteration aborts after the first match</li>
+                    <li>Very little code to write</li>
+                    <li>Very simple to use</li>
+                </ul>
+            </section>
+            <section>
+                <h2>every()</h2>
+                <pre><code data-trim data-noescape>
+                array.every(fn(currentValue, index?, array?), thisArg?)
+            </code></pre>
+                <p>
+                    <b>callback</b> - the function used for testing<br>
+                    <b>currentValue</b> - the element under test<br>
+                    <b>index?</b> - the index of the element under test<br>
+                    <b>array?</b> - the array being tested<br>
+                    <b>thisArg?</b> - the element <i>this</i> is bound to<br>
+                </p>
+                <a href="https://codesandbox.io/s/01nx4kp6n0%20/" target="_blank">Exercises [4]</a>
+            </section>
+            <section>
+                <h2>Wrap-Up: every()</h2>
+                <ul>
+                    <li>Strange naming for <i>match-all</i></li>
+                    <li>Very little code to write</li>
+                    <li>Very simple to use</li>
+                </ul>
+            </section>
+            <section>
+                <h2>map()</h2>
+                <pre><code data-trim data-noescape>
+                array.map(fn(currentValue, index?, array?), thisArg?)
+            </code></pre>
+                <p>
+                    <b>callback</b> - the function used for testing<br>
+                    <b>currentValue</b> - the element under test<br>
+                    <b>index?</b> - the index of the element under test<br>
+                    <b>array?</b> - the array being tested<br>
+                    <b>thisArg?</b> - the element <i>this</i> is bound to<br>
+                </p>
+                <a href="https://codesandbox.io/s/01nx4kp6n0%20/" target="_blank">Exercises [5]</a>
+            </section>
+            <section>
+                <h2>Wrap-Up: map()</h2>
+                <ul>
+                    <li>Very little code to write</li>
+                    <li>Very simple to use</li>
+                </ul>
+            </section>
+            <section>
+                <h2>flatMap()</h2>
+                <pre><code data-trim data-noescape>
+                array.flatMap(fn(currentValue, index?, array?), thisArg?)
+                </code></pre>
+                <p>
+                    <b>callback</b> - the function used for testing<br>
+                    <b>currentValue</b> - the element under test<br>
+                    <b>index?</b> - the index of the element under test<br>
+                    <b>array?</b> - the array being tested<br>
+                    <b>thisArg?</b> - the element <i>this</i> is bound to<br>
+                </p>
+                <a href="https://codesandbox.io/s/01nx4kp6n0%20/" target="_blank">Exercises [6]</a>
+            </section>
+            <section>
+                <h2>Wrap-Up: flatMap()</h2>
+                <ul>
+                    <li>Supported in modern browsers</li>
+                    <li>Combination of flat() and map()</li>
+                    <li>Only for very special use-cases</li>
+                    <li>Very little code to write</li>
+                    <li>Very simple to use</li>
+                </ul>
+            </section>
+            <section>
+                <h2>reduce()</h2>
+                <pre><code data-trim data-noescape>
+                array.reduce(
+                    fn(accumulator, currentValue, index?, array?),
+                    initialValue?)
+            </code></pre>
+                <p>
+                    <b>callback</b> - the function used for testing<br>
+                    <b>accumulator</b> - the result of the reducer<br>
+                    <b>currentValue</b> - the element under test<br>
+                    <b>index?</b> - the index of the element under test<br>
+                    <b>array?</b> - the array being tested<br>
+                    <b>initialValue?</b> - the value to start the reduction with<br>
+                </p>
+                <a href="https://codesandbox.io/s/01nx4kp6n0%20/" target="_blank">Exercises [7-9, 10 optional]</a>
+            </section>
+            <section>
+                <h2>Wrap-Up: reduce()</h2>
+                <ul>
+                    <li>Very versatile and powerful</li>
+                    <li>Use Cases: collect, aggregate, tally, group, pipeline</li>
+                    <li>Very little code to write</li>
+                    <li>Not so simple anymore</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Array Functions: Wrap-Up</h2>
+                <ul>
+                    <li>Very powerful</li>
+                    <li>Very little code to write</li>
+                    <li>Very simple to write tests for</li>
+                    <li>Very simple to use</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Array Functions: Continued ...</h2>
+                <ul class="grid">
+                    <li>reduceRight(...)</li>
+                    <li>findIndex(...)</li>
+                    <li>sort(...)</li>
+                    <li>copyWithin(...)</li>
+                    <li>splice(...)</li>
+                    <li>slice(...)</li>
+                    <li>fill(...)</li>
+                    <li>...</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Array Functions: More ...</h2>
+                <p>Check out and get familiar with the full <a href="https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Array" target="_blank">Array API</a> !</p>
+                <p>There is more coming soon => ES.Next</p>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h2>Reactive Programming</h2>
+            </section>
+            <section>
+                <h2>Reactive Programming</h2>
+                <p>
+                    Terminology
+                </p>
+            </section>
+            <section>
+                <h2>Wikipedia</h2>
+                <blockquote cite="https://en.wikipedia.org/wiki/Reactive_programming">
+                    <p>
+                        "In computing, reactive programming is a declarative programming paradigm
+                        concerned with data streams and the propagation of change"
+                    </p>
+                </blockquote>
+            </section>
+            <section>
+                <h2>Stackoverflow</h2>
+                <img src="../img/reactive/stackoverflow_question.png"/>
+                <br>
+                <img src="../img/reactive/stackoverflow_answer.png"/>
+            </section>
+            <section>
+                <h2>
+                    André Staltz
+                </h2>
+                <blockquote cite="https://gist.github.com/staltz/868e7e9bc2a7b8c1f754">
+                    <p>
+                        "Reactive programming is programming with asynchronous data streams."
+                    </p>
+                </blockquote>
+            </section>
+            <section>
+                <h3>Reactive Extensions</h3>
+                <ul>
+                    <li>Async programming with streams</li>
+                    <li>Many Languages: Java, C#, C++, Swift, ...</li>
+                    <li>Simply Put: Observer Pattern on steroids</li>
+                    <li>Core pattern in Angular</li>
+                </ul>
+            </section>
+            <section>
+                <h3>Pretty much anything is a stream</h3>
+                <pre>
+                    <code data-trim>
+                        import { fromEvent } from 'rxjs';
+
+                        const button = document.querySelector('.button');
+                        const click$ = fromEvent(button, 'click');
+
+                        click$.subscribe(console.log); // log whole click event
+                    </code>
+                </pre>
+            </section>
+            <section>
+                <h3>Pretty much anything is a stream #2</h3>
+                <pre>
+                    <code data-trim>
+                        import { interval, from, of } from 'rxjs';
+
+                        const source$ = interval(1_000);
+
+                        const array$ = from([1,2,3,4,5]);
+
+                        const promise$ = from(fetch('/foo.json'));
+
+                        const vars$ = of('Chris', 'Stefan', 'Patrick');
+                    </code>
+                </pre>
+            </section>
+            <section>
+                <h3>Piping</h3>
+                <ul>
+                    <li>Chain operators together</li>
+                    <li>Each operator should be pure</li>
+                    <li>Share operator logic</li>
+                </ul>
+            </section>
+            <section>
+                <h3>Piping #2</h3>
+                <pre><code class="language-typescript" data-trim contenteditable data-noescape spellcheck="false">
+                    const { filter, map } from 'rxjs/operators';
+
+                    source$
+                        .pipe(
+                            filter(value => value % 2 === 0),
+                            map(value => x + x),
+                        )
+                        .subscribe(console.log)
+                </code></pre>
+            </section>
+            <section>
+                <h3>Piping #3</h3>
+                <a href="http://rxmarbles.com/#switchMap" target="_blank">RxMarbles</a>
+                <pre><code class="language-typescript" data-trim contenteditable data-noescape spellcheck="false">
+                    import { from } from 'rxjs';
+                    const { switchMap } from 'rxjs/operators';
+
+                    source$
+                        .pipe(
+                            switchMap((url) => from(fetch(url))),
+                        );
+                    // cancel inner observable on each new emission
+                </code></pre>
+            </section>
+            <section>
+                <h3>Combining streams</h3>
+                <a href="http://rxmarbles.com/#concat" target="_blank">RxMarbles</a>
+                <pre><code class="language-typescript" data-trim contenteditable data-noescape spellcheck="false">
+                    const { concat, merge } from 'rxjs/operators';
+
+                    source$.pipe(concat(source2$));
+                    // append second stream after first completed
+
+                    source$.pipe(merge(source2$));
+                    // emit every event from both streams
+                    merge(source$, source2$); // also static
+                </code></pre>
+            </section>
+            <section>
+                <h3>Combining streams #2</h3>
+                <pre><code class="language-typescript" data-trim contenteditable data-noescape spellcheck="false">
+                    import { from } from 'rxjs';
+                    const { forkJoin } from 'rxjs/operators';
+
+                    source$
+                        .pipe(
+                            forkJoin(
+                                from(fetch('/api/first')),
+                                from(fetch('/api/second')),
+                            ),
+                        );
+                    // emit after all observables completed
+                    // emit final observable result
+                </code></pre>
+                <aside class="notes">
+                    similar to Promise.all
+                    Emits last event of each Observable when all finished
+                </aside>
+            </section>
+            <section>
+                <h3>Error Handling</h3>
+                <pre><code class="language-typescript" data-trim contenteditable data-noescape spellcheck="false">
+                    import { from, of } from 'rxjs';
+
+                    source$
+                        .pipe(
+                            catchError(error => {
+                                console.error(error);
+                                return of([]);
+                            })
+                        );
+                    // must return new Observable so operators
+                    // down the stream won't fail
+                </code></pre>
+            </section>
+            <section>
+                <h3>RxJS Operators</h3>
+                <p>
+                    <a href="https://github.com/btroncone/learn-rxjs" target="_blank">https://github.com/btroncone/learn-rxjs</a>
+                </p>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h2>RxJS and Angular</h2>
+            </section>
+            <section>
+                <h2>Common pitfalls</h2>
+                <ul>
+                    <li>Memory Leaks</li>
+                    <li>Side-Effects</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Memory Leaks</h2>
+                <pre><code class="language-typescript" data-trim contenteditable data-noescape spellcheck="false">
+                    this.nonFinishingObservable
+                        .subscribe(result => this.result = result);
+                </code></pre>
+                <ul>
+                    <li>Subscription stays open</li>
+                    <li>Closure of callback stays in memory</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Memory Leaks Solution #1</h2>
+                <pre><code class="language-typescript" data-trim contenteditable data-noescape spellcheck="false">
+                    this.subscription = this.nonFinishingObservable
+                        .subscribe(result => this.result = result);
+
+                    // onDestroy
+                    this.subscription?.unsubscribe();
+                </code></pre>
+            </section>
+            <section>
+                <h2>Memory Leaks Solution #2</h2>
+                <pre><code class="language-typescript" data-trim contenteditable data-noescape spellcheck="false">
+                    this.nonFinishingObservable
+                        .pipe(first())
+                        .subscribe(result => this.result = result);
+                </code></pre>
+            </section>
+            <section>
+                <h2>Side-Effects</h2>
+                <pre><code class="language-typescript" data-trim contenteditable data-noescape spellcheck="false">
+                    this.datasetSelectionService.datasetValue$
+                        .subscribe(dataset => this.selectedDataset = dataset);
+                </code></pre>
+                <ul>
+                    <li>Relies on Angular change detection</li>
+                    <li>Often unnecessary caching</li>
+                </ul>
+            </section>
+            <section>
+                <h2>async pipe</h2>
+                <pre><code class="language-typescript" data-trim contenteditable data-noescape spellcheck="false">
+                    &lt;app-component someProperty="observable$ | async"&gt;
+                    &lt;/app-component&gt;
+                </code></pre>
+                <ul>
+                    <li>No memory leaks</li>
+                    <li>No unnecessary unwrapping</li>
+                </ul>
+            </section>
+            <section>
+                <h2>async pipe</h2>
+                <pre><code class="language-typescript" data-trim contenteditable data-noescape spellcheck="false">
+                    this.observable$ = this.someUnfinishingObservable$
+                        .pipe(
+                            filter(value => value > 5),
+                            map(value => value * 2),
+                        );
+                </code></pre>
+            </section>
+            <section>
+                <h2>async pipe</h2>
+                <ul>
+                    <li>Change detection is hard</li>
+                    <li>Use whenever possible</li>
+                    <li>Unwrapping observables at component border</li>
+                    <li>Updating props instead of members</li>
+                </ul>
+            </section>
+            <section>
+                <h3>Exercise Time!</h3>
+                <p>
+                    <a href="https://codesandbox.io/s/106z3w52nl" target="_blank">Codesandbox</a>
+                </p>
+            </section>
+            <section>
+                <h2>Further Readings & Resources</h2>
+                <ul>
+                    <li><a href="http://rxmarbles.com/" target="_blank">RX Marbles</a></li>
+                    <li><a href="https://github.com/btroncone/learn-rxjs" target="_blank">Learn RxJS</a></li>
+                    <li><a href="https://rxjs-dev.firebaseapp.com/" target="_blank">RxJS</a></li>
+                </ul>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h2>Testing!</h2>
+            </section>
+            <section>
+                <h2>TestBed</h2>
+                <ul>
+                    <li>Init Angular environment</li>
+                    <li>Provide necessary injectables</li>
+                    <li>Slow...</li>
+                </ul>
+            </section>
+            <section>
+                <h3>TestBed #1</h3>
+                <pre><code class="language-typescript" data-trim contenteditable data-noescape spellcheck="false" data-line-numbers="1-12|2|3-8|9|10">
+                    await TestBed.configureTestingModule({
+                      declarations: [HeaderBarComponent],
+                      providers: [
+                        {
+                          provide: AuthService,
+                          useValue: { name: () => Promise.resolve('name') }
+                        }
+                      ],
+                      imports: [HttpClientTestingModule],
+                      schemas: [NO_ERRORS_SCHEMA]
+                    })
+                      .compileComponents();
+                </code></pre>
+            </section>
+            <section>
+                <h3>TestBed #2</h3>
+                <pre><code class="language-typescript" data-trim contenteditable data-noescape spellcheck="false">
+                    beforeEach(() => {
+                      fixture = TestBed.createComponent(HeaderBarComponent);
+                      component = fixture.componentInstance;
+                      fixture.detectChanges();
+                    });
+                </code></pre>
+            </section>
+            <section>
+                <h3>No TestBed</h3>
+                <ul>
+                    <li>No Template</li>
+                    <li>Testing public methods of Component</li>
+                    <li>Fast!</li>
+                </ul>
+            </section>
+            <section>
+                <h3>No TestBed</h3>
+                <pre><code class="language-typescript" data-trim contenteditable data-noescape spellcheck="false">
+                    const component = new MyComponent(
+                        { name: () => Promise.resolve('name') },
+                        null,
+                        null,
+                    );
+                    expect(component.myPublicFunction()).toEqual(123);
+                </code></pre>
+            </section>
+            <section>
+                <h3>Mocking/Stubbing</h3>
+                <ul>
+                    <li>Spies</li>
+                    <li>Listen to and check calls</li>
+                    <li>Stub/Mock functionality</li>
+                </ul>
+            </section>
+            <section>
+                <h3>Spies #1</h3>
+                <pre><code class="language-typescript" data-trim contenteditable data-noescape spellcheck="false">
+                    const spy = spyOn(component.elementsToDisplay, 'emit');
+
+                    expect(spy).toHaveBeenCalledTimes(1)
+                    expect(spy).toHaveBeenCalledWith('param1', 'param2', {});
+                </code></pre>
+            </section>
+            <section>
+                <h3>Spies #2</h3>
+                <pre><code class="language-typescript" data-trim contenteditable data-noescape spellcheck="false">
+                    spyOn(service, 'myFunc').and.callThrough();
+                    spyOn(service, 'myFunc').and.returnValue('returnValue');
+                    spyOn(service, 'myFunc').and.callFake((...args) => { ... });
+                </code></pre>
+            </section>
+            <section>
+                <h3>Spies #3</h3>
+                <pre><code class="language-typescript" data-trim contenteditable data-noescape spellcheck="false">
+                    const spy = jasmine.createSpy();
+
+                    const component = new MyComponent({ name: spy });
+
+                    expect(spy).toHaveBeenCalledTimes(1)
+                </code></pre>
+            </section>
+            <section>
+                <h3>Advanced Topics</h3>
+                <ul>
+                    <li>FakeTimers</li>
+                    <li>FakeAsync</li>
+                    <li>We'll look at this later :)</li>
+                </ul>
+            </section>
+            <section>
+                <h3>Best-Practices</h3>
+                <ul>
+                    <li>Keep tests fast</li>
+                    <li>Keep tests small</li>
+                    <li>Don't test HTML/CSS structure</li>
+                </ul>
+            </section>
+        </section>
+        <section>
+            <section>
+                <h2>HTML / (S)CSS</h2>
+            </section>
+            <section>
+                <h3>CSS</h3>
+                <p>
+                    Cascading Style Sheets
+                </p>
+            </section>
+            <section>
+                <h3>CSS Selectors</h3>
+                <p>
+                    <a href="https://flukeout.github.io/" target="_blank">CSS Diner</a>
+                </p>
+            </section>
+            <section>
+                <h3>Sass (scss)</h3>
+                <ul>
+                    <li>Extension Language to CSS</li>
+                    <li>Compiled to CSS</li>
+                    <li>Imports, Nesting, Mixins, Variables...</li>
+                </ul>
+            </section>
+            <section>
+                <h3>Sass Basics #1</h3>
+                <pre><code class="language-typescript" data-trim contenteditable data-noescape spellcheck="false">
+                    @use "sass:math";
+
+                    $font-size: 2.4rem;
+                    $line-height: math.div(3.2, 2.4);
+                </code></pre>
+            </section>
+            <section>
+                <h3>Sass Basics #2</h3>
+                <pre><code class="language-typescript" data-trim contenteditable data-noescape spellcheck="false">
+                    @import '../../variables.scss';
+
+                    .my-class {
+                      span {
+                        font-size: $font-size;
+                      }
+
+                      &:hover {
+                        color: $color-black-13;
+                      }
+                    }
+                </code></pre>
+            </section>
+        </section>
+    </div>
+</div>
+
+<script src="dist/reveal.js"></script>
+<script src="plugin/notes/notes.js"></script>
+<script src="plugin/markdown/markdown.js"></script>
+<script src="plugin/highlight/highlight.js"></script>
+<script>
+  // More info about initialization & config:
+  // - https://revealjs.com/initialization/
+  // - https://revealjs.com/config/
+  Reveal.initialize({
+    hash: true,
+
+    // Learn about plugins: https://revealjs.com/plugins/
+    plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
+  });
+</script>
+</body>
 </html>
